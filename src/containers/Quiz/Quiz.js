@@ -35,6 +35,10 @@ class Quiz extends React.Component {
         ]
     }
 
+    componentDidMount() {
+        console.log('quiz id - ', this.props.match.params.id);
+    }
+
     onAnswerClickHandler = answerId => {
         if (this.state.answerState) {
             const key = Object.keys(this.state.answerState)[0];
@@ -100,12 +104,12 @@ class Quiz extends React.Component {
                     <h1>Pass The Quiz</h1>
                     {
                         this.state.isFinished
-                            ? <FinishedQuiz 
+                            ? <FinishedQuiz
                                 results={this.state.results}
                                 quiz={this.state.quiz}
                                 onRetry={this.onRetryHandler}
                                 />
-                            : <ActiveQuiz 
+                            : <ActiveQuiz
                                 answers={this.state.quiz[this.state.activeQuestion].answers}
                                 question={this.state.quiz[this.state.activeQuestion].question}
                                 onAnswerClick={this.onAnswerClickHandler}
