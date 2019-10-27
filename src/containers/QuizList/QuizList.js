@@ -2,16 +2,12 @@ import React from 'react';
 import classes from './QuizList.css';
 import { NavLink } from "react-router-dom";
 import Loader from "../../components/UI/Loader/Loader";
-import axios from '../../axios/axios-quiz';
+import {connect} from "react-redux";
+import {fetchQuizes} from "../../store/actions/quiz";
 
 class QuizList extends React.Component {
-    state = {
-        quizes: [],
-        loading: true
-    }
-
     renderQuizes () {
-        return this.state.quizes.map((quiz, index) => {
+        return this.props.quizes.map((quiz, index) => {
            return (
                <li
                    key={quiz.id}
@@ -27,24 +23,7 @@ class QuizList extends React.Component {
     }
 
     async componentDidMount() {
-        try {
-            const response = await axios.get('/quizes.json');
-
-            let quizes = [];
-            Object.keys(response.data).forEach((key, index) => {
-                quizes.push({
-                    id: key,
-                    name: `Quiz #${index + 1}`
-                });
-            });
-
-            this.setState({
-                quizes,
-                loading: false
-            });
-        } catch (e) {
-            console.log(e);
-        }
+        this.props.fetchQuizes();
     }
 
     render() {
@@ -53,7 +32,7 @@ class QuizList extends React.Component {
                 <div>
                     <h1>Quiz List</h1>
 
-                    { this.state.loading
+                    { this.props.loading && this.props.quizes.length !== 0
                         ? <Loader />
                         : <ul>
                             { this.renderQuizes() }
@@ -65,4 +44,17 @@ class QuizList extends React.Component {
     }
 }
 
-export default QuizList;
+function mapStateToProps(state) {
+    return {
+        quizes: state.quiz.quizes,
+        loading: state.quiz.loading
+    }
+}
+
+function mapDispatchToProps(dispatch) {
+    return {
+        fetchQuizes: () => dispatch(fetchQuizes())
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(QuizList);
